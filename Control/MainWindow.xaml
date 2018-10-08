@@ -5,55 +5,88 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Control"
         mc:Ignorable="d"
-        Title="Window1" Height="300" Width="456.502" Closing="Window_Closing">
-    <Grid Margin="10,10,10,10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition></RowDefinition>
-        </Grid.RowDefinitions>
+        Title="Window1" Height="265.5" Width="766.002" Closing="Window_Closing">
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="2*"/>
-            </Grid.ColumnDefinitions>
+    <Grid Margin="10,0,10,10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="350"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0" Name="cbbListUser" Height="22" Margin="17.5,0" VerticalAlignment="Top" SelectionChanged="cbbListUser_SelectionChanged"/>
-            <Button Grid.Column="1" Margin="1,0,0,0" Name="btnRefreshListUser" Content="Refresh List User" Height="22" VerticalAlignment="Bottom" Click="btnRefreshListUser_Click"/>
+        <GroupBox  Grid.Column="0" Margin="0,0,10,0">
+            <GroupBox.Header>Manager</GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <TextBlock Name="txtSessionID" Grid.Column="3" Text="SessionID: " TextAlignment="Right" VerticalAlignment="Center"/>
-            <Button Grid.Column="4" Margin="1,0,0,0" Name="btnRefreshSSID" Content="Refresh SsID" HorizontalAlignment="Left" Width="102.5" Click="btnRefreshSSID_Click"/>
-        </Grid>
+                <DockPanel Margin="0,5,0,0">
+                    <TextBlock Name="lblUserName" Text="UserName: "></TextBlock>
+                    <TextBlock Name="txtSessionID" Text="SessionID: " HorizontalAlignment="Right" DockPanel.Dock="Right" Width="80"/>
+                </DockPanel>
 
-        <Grid Grid.Row="1" Margin="0,20,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
+                <CheckBox Name="ckbShowOffline" Content="Show Offline User" Grid.Row="1" Margin="0,5,0,0"/>
+                <ListView Margin="0,5,0,0" Grid.Row="2" Name="lstMainUser" SelectionChanged="lstMainUser_SelectionChanged">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Width="50" Header="ID" DisplayMemberBinding="{Binding id}"/>
+                            <GridViewColumn Width="100" Header="Name" DisplayMemberBinding="{Binding name}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
 
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
+                <Grid Grid.Row="3" Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-            <Button Name="btnShutdown" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5" Content="SHUTDOWN" Click="btnShutdown_Click"/>
-            <Button Name="btnRestart" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5" Content="RESTART" Click="btnRestart_Click"/>
-            <Button Name="btnLogoff"  Grid.Row="0" Grid.Column="2" Margin="5,5,5,5" Content="LOG OFF" Click="btnLogoff_Click"/>
-            <Button Name="btnFileExplorer" Grid.Row="0" Grid.Column="3" Margin="5,5,5,5" Content="FILE EXPLORER" Click="btnFileExplorer_Click"/>
-            <Button Grid.Row="1" Grid.Column="0" Name="btnChat" Margin="5,5,5,5" Content="CHAT" Click="btnChat_Click"/>
-            <Button Name="btnViewKeyLog" Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" Content="VIEW KEY LOG" Click="btnViewKeyLog_Click"/>
-            <Button Name="btnViewScreen" Grid.Row="1" Grid.Column="2" Margin="5,5,5,5" Click="btnViewScreen_Click">
-                <StackPanel>
-                    <TextBlock Text="VIEW SCREEN"/>
-                    <ProgressBar Name="prbViewScreen" SmallChange="1"/>
-                </StackPanel>
-            </Button>
+                    <Button  Margin="0,0,0,0" Name="btnRefreshListUser" Content="Refresh List User" Click="btnRefreshListUser_Click"/>
+                    <Button Margin="10,0,0,0" Grid.Column="1" Name="btnRefreshSSID" Content="Refresh SsID" Click="btnRefreshSSID_Click"/>
+                    <Button  Margin="10,0,0,0" Grid.Column="2" Name="btnUserManager" Content="User Manager" Click="btnUserManager_Click"/>
+                </Grid>
+            </Grid>
+        </GroupBox>
 
-        </Grid>
+        <GroupBox Grid.Column="1">
+            <GroupBox.Header>Operation</GroupBox.Header>
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                
+                <Grid Grid.Row="0" Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Button Name="btnShutdown" Grid.Row="0" Grid.Column="0" Margin="5,5,5,5" Content="SHUTDOWN" Click="btnShutdown_Click"/>
+                    <Button Name="btnRestart" Grid.Row="0" Grid.Column="1" Margin="5,5,5,5" Content="RESTART" Click="btnRestart_Click"/>
+                    <Button Name="btnLogoff"  Grid.Row="0" Grid.Column="2" Margin="5,5,5,5" Content="LOG OFF" Click="btnLogoff_Click"/>
+                    <Button Name="btnFileExplorer" Grid.Row="0" Grid.Column="3" Margin="5,5,5,5" Content="FILE EXPLORER" Click="btnFileExplorer_Click"/>
+                    <Button Grid.Row="1" Grid.Column="0" Name="btnChat" Margin="5,5,5,5" Content="CHAT" Click="btnChat_Click"/>
+                    <Button Name="btnViewKeyLog" Grid.Row="1" Grid.Column="1" Margin="5,5,5,5" Content="VIEW KEY LOG" Click="btnViewKeyLog_Click"/>
+                    <Button Name="btnViewScreen" Grid.Row="1" Grid.Column="2" Margin="5,5,5,5" Click="btnViewScreen_Click">
+                        <StackPanel>
+                            <TextBlock Text="VIEW SCREEN"/>
+                            <ProgressBar Name="prbViewScreen" SmallChange="1"/>
+                        </StackPanel>
+                    </Button>
+
+                </Grid>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>

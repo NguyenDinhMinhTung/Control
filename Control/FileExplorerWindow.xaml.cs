@@ -18,6 +18,8 @@ namespace Control
     /// </summary>
     public partial class FileExplorerWindow : Window
     {
+        delegate void _Action();
+
         struct FileItem
         {
             public string path;
@@ -31,6 +33,7 @@ namespace Control
         int touserid, sessionid;
 
         string path = "";
+        string nextPath = "";
 
         public FileExplorerWindow(int touserid, int sessionid)
         {
@@ -42,6 +45,31 @@ namespace Control
             Tools.sendCommand("FILEEXPLORER", touserid, sessionid);
             enableControl(false);
             btnRun.IsEnabled = false;
+        }
+
+        public void enableBtnRun(bool enable)
+        {
+            btnRun.Dispatcher.Invoke(new _Action(() => { btnRun.IsEnabled = enable; }));
+        }
+
+        public void enableLstExplorer(bool enable)
+        {
+            lstExplorer.Dispatcher.Invoke(new _Action(() => { lstExplorer.IsEnabled = enable; }));
+        }
+
+        public void enableBtnDelete(bool enable)
+        {
+            btnDelete.Dispatcher.Invoke(new _Action(() => { btnDelete.IsEnabled = enable; }));
+        }
+
+        public void enableBtnRename(bool enable)
+        {
+            btnRename.Dispatcher.Invoke(new _Action(() => { btnRename.IsEnabled = enable; }));
+        }
+
+        public void enableBtnCancel(bool enable)
+        {
+            btnCancel.Dispatcher.Invoke(new _Action(() => { btnCancel.IsEnabled = enable; }));
         }
 
         private void lstExplorer_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -65,8 +93,9 @@ namespace Control
 
         private void enableControl(Boolean en)
         {
-            lstExplorer.IsEnabled = btnDelete.IsEnabled = btnRename.IsEnabled = en;
-
+            enableLstExplorer(en);
+            enableBtnDelete(en);
+            enableBtnRename(en);
         }
 
         private string getName(string path)
@@ -81,9 +110,15 @@ namespace Control
         {
             string[] paths = cmd.Split('|');
 
+            path = nextPath;
+            lblPath.Dispatcher.Invoke(new _Action(() => { lblPath.Text = "Path: " + path; }));
+
             index++;
 
-            lstExplorer.Items.Clear();
+            lstExplorer.Dispatcher.Invoke(new _Action(() =>
+            {
+                lstExplorer.Items.Clear();
+            }));
 
             List<FileItem> lstFile = new List<FileItem>();
 
@@ -95,7 +130,7 @@ namespace Control
                 fileItem.isFolder = true;
                 lstFile.Add(fileItem);
 
-                lstExplorer.Items.Add(fileItem.name);
+                lstExplorer.Dispatcher.Invoke(new _Action(() => { lstExplorer.Items.Add(fileItem.name); }));
             }
 
             Boolean isFolder = true;
@@ -114,7 +149,10 @@ namespace Control
                 fileItem.isFolder = isFolder;
                 lstFile.Add(fileItem);
 
-                lstExplorer.Items.Add(fileItem.name);
+                lstExplorer.Dispatcher.Invoke(new _Action(() =>
+                {
+                    lstExplorer.Items.Add(fileItem.name);
+                }));
             }
 
             lstFiles.Add(lstFile);
@@ -126,10 +164,12 @@ namespace Control
             else
             {
                 enableControl(false);
-                lstExplorer.IsEnabled = true;
+                lstExplorer.Dispatcher.Invoke(new _Action(() => { lstExplorer.IsEnabled = true; }));
             }
 
-            btnRun.IsEnabled = false;
+            //btnRun.IsEnabled = false;
+            enableBtnRun(false);
+            enableBtnCancel(false);
         }
 
         private void btnRun_Click(object sender, RoutedEventArgs e)
@@ -144,18 +184,15 @@ namespace Control
             Tools.sendCommand("DELETE " + path, touserid, sessionid);
         }
 
-        private void lstExplorer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void access(int selectIndex)
         {
-
-            if (lstExplorer.SelectedIndex > 0 || (lstExplorer.SelectedIndex == 0 && index == 0))
+            if (selectIndex > 0 || (selectIndex == 0 && index == 0))
             {
-                int selectIndex = lstExplorer.SelectedIndex;
-
                 if (lstFiles[index][selectIndex].isFolder)
                 {
                     Tools.sendCommand("FILEEXPLORER " + lstFiles[index][selectIndex].path.Replace('\\', ';'), touserid, sessionid);
-                    path = lstFiles[index][selectIndex].path;
-                    lblPath.Text = "Path: " + path;
+                    btnCancel.IsEnabled = true;
+                    nextPath = lstFiles[index][selectIndex].path;
 
                     enableControl(false);
                     btnRun.IsEnabled = false;
@@ -189,7 +226,20 @@ namespace Control
 
                 enableControl(true);
                 btnRun.IsEnabled = false;
+                btnCancel.IsEnabled = false;
             }
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            //if (index > 0) access(0);
+
+            enableControl(true);
+        }
+
+        private void lstExplorer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            access(lstExplorer.SelectedIndex);
         }
     }
 }

@@ -28,5 +28,41 @@ namespace Control
         {
             Tools.request("http://akita123.atwebpages.com/main.php?type=2&cmd='" + command + "'&fromuserid=1&touserid=" + touserid + "&ssid=" + sessionid);
         }
+
+        public static int getUserIdFromString(string s)
+        {
+            return int.Parse(s.Substring(0, s.IndexOf('.')));
+        }
+
+        public static string getUserNameFromString(string s)
+        {
+            return s.Substring(s.IndexOf('.') + 2);
+        }
+
+        public static List<User> getListUser()
+        {
+            string[] sep = { "</br>" };
+            string[] users = Tools.request("http://akita123.atwebpages.com/main.php?type=6").Split(sep, StringSplitOptions.None);
+
+            List<User> result = new List<User>();
+
+            foreach (string user in users)
+            {
+                if (user != null && user != "" && getUserIdFromString(user) != 1)
+                {
+                    int id = getUserIdFromString(user);
+                    string name = getUserNameFromString(user);
+
+                    result.Add(new User(id, name));
+                }
+            }
+
+            return result;
+        }
+
+        public static void updateUsername(int id, string name)
+        {
+            request("http://akita123.atwebpages.com/main.php?type=9&id=" + id + "&username=" + name);
+        }
     }
 }

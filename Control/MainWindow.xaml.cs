@@ -23,9 +23,12 @@ namespace Control
     {
         int userID = 1;
         int sessionID;
-        int touserid = 11;
+        int touserid;
+        int selectedUser;
+
         ChatWindow chatWindow;
         FileExplorerWindow fileExplorerWindow;
+        List<User> lstUser;
 
         delegate void t();
 
@@ -38,11 +41,17 @@ namespace Control
                 Tools.sendCommand("mess " + mess, touserid, sessionID);
             });
 
-            getListUser();
-            DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(timer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            dispatcherTimer.Start();
+            refreshListUser();
+            lstMainUser.ItemsSource = lstUser;
+
+            //DispatcherTimer dispatcherTimer = new DispatcherTimer();
+            //dispatcherTimer.Tick += new EventHandler(timer_Tick);
+            //dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
+            //dispatcherTimer.Start();
+
+            Thread thread = new Thread(requestCommand);
+            thread.IsBackground = true;
+            thread.Start();
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -55,6 +64,24 @@ namespace Control
                 {
                     cmdProc(cmd);
                 }
+            }
+        }
+
+        private void requestCommand()
+        {
+            while (true)
+            {
+                string[] cmds = getCommand();
+
+                foreach (string cmd in cmds)
+                {
+                    if (cmd != null && cmd != "")
+                    {
+                        cmdProc(cmd);
+                    }
+                }
+
+                Thread.Sleep(1000);
             }
         }
 
@@ -110,27 +137,6 @@ namespace Control
             return responseFromServer.Split(sep, StringSplitOptions.None);
         }
 
-        private void getListUser()
-        {
-            cbbListUser.Items.Clear();
-
-            string[] sep = { "</br>" };
-            string[] users = Tools.request("http://akita123.atwebpages.com/main.php?type=6").Split(sep, StringSplitOptions.None);
-
-            foreach (string user in users)
-            {
-                if (user != null && user != "1" && user != "")
-                {
-                    cbbListUser.Items.Add(user);
-                }
-            }
-
-            if (cbbListUser.Items.Count > 0)
-            {
-                cbbListUser.SelectedIndex = 0;
-            }
-        }
-
         private int getSessionID(int touserid)
         {
             string url = "http://akita123.atwebpages.com/main.php?type=4&userid=" + touserid;
@@ -144,18 +150,18 @@ namespace Control
             txtSessionID.Text = "SessionID: " + sessionID;
         }
 
-        private void cbbListUser_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void refreshListUser()
         {
-            if (cbbListUser.SelectedItem != null)
+            lstUser = Tools.getListUser();
+            if (lstMainUser.Items.Count > 0)
             {
-                touserid = int.Parse(cbbListUser.SelectedItem.ToString());
-                refreshSessionID(touserid);
+                lstMainUser.SelectedIndex = selectedUser;
             }
         }
 
         private void btnRefreshListUser_Click(object sender, RoutedEventArgs e)
         {
-            getListUser();
+            refreshListUser();
         }
 
         private void btnRefreshSSID_Click(object sender, RoutedEventArgs e)
@@ -205,6 +211,23 @@ namespace Control
         private void btnLogoff_Click(object sender, RoutedEventArgs e)
         {
             Tools.sendCommand("logoff", touserid, sessionID);
+        }
+
+        private void btnUserManager_Click(object sender, RoutedEventArgs e)
+        {
+            UserManagerWindow userManagerWindow = new UserManagerWindow();
+            userManagerWindow.Show();
+        }
+
+        private void lstMainUser_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (lstMainUser.SelectedItem != null)
+            {
+                selectedUser = lstMainUser.SelectedIndex;
+                touserid = lstUser[selectedUser].id;
+                lblUserName.Text = "Username: " + lstUser[selectedUser].name;
+                refreshSessionID(touserid);
+            }
         }
     }
 }

@@ -18,3 +18,5 @@ C:\Users\megas\source\repos\Control\Control\obj\Debug\ViewKeyLogWindow.g.cs
 C:\Users\megas\source\repos\Control\Control\obj\Debug\ViewKeyLogWindow.baml
 C:\Users\megas\source\repos\Control\Control\obj\Debug\FileExplorerWindow.g.cs
 C:\Users\megas\source\repos\Control\Control\obj\Debug\FileExplorerWindow.baml
+C:\Users\megas\source\repos\Control\Control\obj\Debug\UserManagerWindow.g.cs
+C:\Users\megas\source\repos\Control\Control\obj\Debug\UserManagerWindow.baml

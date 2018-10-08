@@ -55,6 +55,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tools.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="UserManagerWindow.xaml.cs">
+      <DependentUpon>UserManagerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewKeyLogWindow.xaml.cs">
       <DependentUpon>ViewKeyLogWindow.xaml</DependentUpon>
     </Compile>
@@ -75,6 +79,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserManagerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
