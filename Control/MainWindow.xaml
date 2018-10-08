@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Control"
         mc:Ignorable="d"
-        Title="Window1" Height="265.5" Width="766.002" Closing="Window_Closing">
+        Title="Window1" Height="265.5" Width="794.197" Closing="Window_Closing">
 
     <Grid Margin="10,0,10,10">
         <Grid.ColumnDefinitions>
@@ -19,21 +19,21 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
                 <DockPanel Margin="0,5,0,0">
                     <TextBlock Name="lblUserName" Text="UserName: "></TextBlock>
-                    <TextBlock Name="txtSessionID" Text="SessionID: " HorizontalAlignment="Right" DockPanel.Dock="Right" Width="80"/>
                 </DockPanel>
 
-                <CheckBox Name="ckbShowOffline" Content="Show Offline User" Grid.Row="1" Margin="0,5,0,0"/>
+                <CheckBox Name="ckbShowOffline" Content="Show Offline User" Grid.Row="1" Margin="0,5,0,0" Click="ckbShowOffline_Click"/>
                 <ListView Margin="0,5,0,0" Grid.Row="2" Name="lstMainUser" SelectionChanged="lstMainUser_SelectionChanged">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Width="50" Header="ID" DisplayMemberBinding="{Binding id}"/>
                             <GridViewColumn Width="100" Header="Name" DisplayMemberBinding="{Binding name}"/>
+                            <GridViewColumn Width="100" Header="Status" DisplayMemberBinding="{Binding status}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -45,14 +45,13 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <Button  Margin="0,0,0,0" Name="btnRefreshListUser" Content="Refresh List User" Click="btnRefreshListUser_Click"/>
-                    <Button Margin="10,0,0,0" Grid.Column="1" Name="btnRefreshSSID" Content="Refresh SsID" Click="btnRefreshSSID_Click"/>
+                    <Button  Margin="0,0,0,0" Height="30" Name="btnRefreshListUser" Content="Refresh List User" Click="btnRefreshListUser_Click"/>
                     <Button  Margin="10,0,0,0" Grid.Column="2" Name="btnUserManager" Content="User Manager" Click="btnUserManager_Click"/>
                 </Grid>
             </Grid>
         </GroupBox>
 
-        <GroupBox Grid.Column="1">
+        <GroupBox Grid.Column="1" Name="grbOperation">
             <GroupBox.Header>Operation</GroupBox.Header>
             <Grid >
                 <Grid.RowDefinitions>

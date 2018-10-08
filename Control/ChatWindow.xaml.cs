@@ -23,13 +23,24 @@ namespace Control
     {
         public delegate void SendMessage(string mess);
 
-        int userID = 1;
+        int touserid;
         SendMessage sendMessage;
 
         public ChatWindow(SendMessage sendMessage)
         {
             InitializeComponent();
             this.sendMessage = sendMessage;
+        }
+
+        public void setTouserid(int touserid)
+        {
+            if (this.touserid != touserid)
+            {
+                txtChatBox.SelectAll();
+                txtChatBox.Selection.Text = "";
+            }
+
+            this.touserid = touserid;
         }
 
         private void send()
@@ -60,6 +71,7 @@ namespace Control
         {
             e.Cancel = true;
             this.Hide();
+            Tools.sendCommand("CLOSECHATBOX", touserid, 0);
         }
     }
 }

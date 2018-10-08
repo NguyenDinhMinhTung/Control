@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Control"
         mc:Ignorable="d"
-        Title="UserManagerWindow" Height="300" Width="329">
+        Title="UserManagerWindow" Height="300" Width="342.636">
     <Grid Margin="10,10,10,10">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -22,10 +22,10 @@
         </ListView>
 
         <StackPanel Margin="0,10,0,0" Grid.Row="1" Orientation="Horizontal">
-            <TextBlock Name="lblId" Text="ID: " Width="30"/>
             <TextBlock Text="UserName: " Margin="10,0,0,0"/>
             <TextBox Name="txtName" Width="100" />
             <Button Name="btnUpdate" Content="UPDATE" Margin="20,0,0,0" Click="btnUpdate_Click"/>
+            <Button Name="btnDelete" Content="DELETE" Margin="10,0,0,0" Click="btnDelete_Click"/>
         </StackPanel>
     </Grid>
 </Window>

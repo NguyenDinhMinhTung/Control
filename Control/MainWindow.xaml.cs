@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Control
@@ -30,7 +23,7 @@ namespace Control
         FileExplorerWindow fileExplorerWindow;
         List<User> lstUser;
 
-        delegate void t();
+        delegate void _Action();
 
         public MainWindow()
         {
@@ -42,18 +35,24 @@ namespace Control
             });
 
             refreshListUser();
-            lstMainUser.ItemsSource = lstUser;
 
-            //DispatcherTimer dispatcherTimer = new DispatcherTimer();
-            //dispatcherTimer.Tick += new EventHandler(timer_Tick);
-            //dispatcherTimer.Interval = new TimeSpan(0, 0, 1);
-            //dispatcherTimer.Start();
+            //grbOperation.IsEnabled = false;
 
             Thread thread = new Thread(requestCommand);
             thread.IsBackground = true;
             thread.Start();
         }
 
+        private bool lstMainUserFilter(object item)
+        {
+            if (ckbShowOffline.IsChecked == false)
+            {
+                User user = item as User;
+                if (user.status.ToUpper() == "ONLINE") return true; else return false;
+            }
+
+            return true;
+        }
         private void timer_Tick(object sender, EventArgs e)
         {
             string[] cmds = getCommand();
@@ -89,9 +88,11 @@ namespace Control
         {
             if (cmd.ToUpper().StartsWith("MESS"))
             {
-
-                chatWindow.txtChatBox.AppendText("CLIENT: " + cmd.Substring(5) + Environment.NewLine);
-                chatWindow.txtChatBox.ScrollToEnd();
+                chatWindow.txtChatBox.Dispatcher.Invoke(new _Action(() =>
+                {
+                    chatWindow.txtChatBox.AppendText("CLIENT: " + cmd.Substring(5) + Environment.NewLine);
+                    chatWindow.txtChatBox.ScrollToEnd();
+                }));
             }
             else if (cmd.ToUpper().StartsWith("FILEEXPLORER"))
             {
@@ -108,25 +109,43 @@ namespace Control
                 {
                     using (var client = new WebClient())
                     {
-                        //client.DownloadProgressChanged += wc_DownloadProgressChanged;
-                        //client.DownloadFileAsync(new System.Uri("http://akita123.atwebpages.com/folder/ab.rar"), "ab.jpg");
                         client.DownloadFile("http://akita123.atwebpages.com/folder/ab.rar", "ab.jpg");
                         System.Diagnostics.Process.Start("ab.jpg");
 
 
-                        t xt = () => { prbViewScreen.IsIndeterminate = false; };
+                        _Action xt = () => { prbViewScreen.IsIndeterminate = false; };
                         prbViewScreen.Dispatcher.Invoke(DispatcherPriority.Normal, xt);
 
 
                     }
                 }).Start();
             }
+            else if (cmd.ToUpper().StartsWith("ONLINE"))
+            {
+                int id = int.Parse(cmd.Substring(7));
+                setOnline(id);
+            }
         }
 
-        //void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        //{
-        //    prbViewScreen.Value = e.ProgressPercentage;
-        //}
+        private void setOnline(int userid)
+        {
+            foreach (User user in lstUser)
+            {
+                if (user.id == userid)
+                {
+                    user.status = "Online";
+
+
+                    lstMainUser.Dispatcher.Invoke(new _Action(() =>
+                    {
+                        lstMainUser.Items.Refresh();
+                        CollectionViewSource.GetDefaultView(lstMainUser.ItemsSource).Refresh();
+                    }));
+
+                    return;
+                }
+            }
+        }
 
         private string[] getCommand()
         {
@@ -139,20 +158,36 @@ namespace Control
 
         private int getSessionID(int touserid)
         {
-            string url = "http://akita123.atwebpages.com/main.php?type=4&userid=" + touserid;
-            return int.Parse(Tools.request(url));
+            //string url = "http://akita123.atwebpages.com/main.php?type=4&userid=" + touserid;
+            //return int.Parse(Tools.request(url));
+            return 0;
         }
 
-        private void refreshSessionID(int touserid)
-        {
-            sessionID = getSessionID(touserid);
+        //private void refreshSessionID(int touserid)
+        //{
+        //    sessionID = getSessionID(touserid);
 
-            txtSessionID.Text = "SessionID: " + sessionID;
-        }
+        //    txtSessionID.Text = "SessionID: " + sessionID;
+        //}
 
         private void refreshListUser()
         {
             lstUser = Tools.getListUser();
+
+            lstMainUser.ItemsSource = lstUser;
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lstMainUser.ItemsSource);
+            view.Filter = lstMainUserFilter;
+
+            foreach (User user in lstUser)
+            {
+                Tools.sendCommand("ONLINE", user.id, 0);
+            }
+
+            if (selectedUser > lstMainUser.SelectedIndex)
+            {
+                selectedUser = lstMainUser.SelectedIndex;
+            }
+
             if (lstMainUser.Items.Count > 0)
             {
                 lstMainUser.SelectedIndex = selectedUser;
@@ -164,14 +199,18 @@ namespace Control
             refreshListUser();
         }
 
-        private void btnRefreshSSID_Click(object sender, RoutedEventArgs e)
-        {
-            refreshSessionID(touserid);
-        }
+        //private void btnRefreshSSID_Click(object sender, RoutedEventArgs e)
+        //{
+        //    refreshSessionID(touserid);
+        //}
 
         private void btnChat_Click(object sender, RoutedEventArgs e)
         {
-            chatWindow.Show();
+            if (chatWindow != null)
+            {
+                chatWindow.Show();
+                chatWindow.setTouserid(touserid);
+            }
         }
 
         private void btnShutdown_Click(object sender, RoutedEventArgs e)
@@ -182,6 +221,7 @@ namespace Control
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             chatWindow.Close();
+            Tools.sendCommand("CLOSECHATBOX", touserid, 0);
             Environment.Exit(0);
         }
 
@@ -223,10 +263,31 @@ namespace Control
         {
             if (lstMainUser.SelectedItem != null)
             {
-                selectedUser = lstMainUser.SelectedIndex;
+                selectedUser = lstUser.IndexOf(lstMainUser.SelectedItem as User);
                 touserid = lstUser[selectedUser].id;
                 lblUserName.Text = "Username: " + lstUser[selectedUser].name;
-                refreshSessionID(touserid);
+                //refreshSessionID(touserid);
+
+                if (lstUser[selectedUser].status.ToUpper() == "ONLINE")
+                {
+                    grbOperation.IsEnabled = true;
+                }
+                else
+                {
+                    //grbOperation.IsEnabled = false;
+                }
+            }
+            else
+            {
+                //grbOperation.IsEnabled = false;
+            }
+        }
+
+        private void ckbShowOffline_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMainUser != null && lstMainUser.ItemsSource != null)
+            {
+                CollectionViewSource.GetDefaultView(lstMainUser.ItemsSource).Refresh();
             }
         }
     }

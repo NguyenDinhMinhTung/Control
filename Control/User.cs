@@ -10,9 +10,11 @@ namespace Control
         {
             this.id = id;
             this.name = name;
+            status = "Offline";
         }
 
         public int id { get; set; }
         public string name { get; set; }
+        public string status { get; set; }
     }
 }

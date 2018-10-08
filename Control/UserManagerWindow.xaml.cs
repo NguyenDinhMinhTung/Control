@@ -32,6 +32,8 @@ namespace Control
             lstUser.ItemsSource = list;
 
             btnUpdate.IsEnabled = false;
+            btnDelete.IsEnabled = false;
+            txtName.IsEnabled = false;
         }
 
         private void lstUser_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -39,13 +41,16 @@ namespace Control
             if (lstUser.SelectedIndex >= 0)
             {
                 txtName.Text = list[lstUser.SelectedIndex].name;
-                lblId.Text = "ID: " + list[lstUser.SelectedIndex].id;
                 btnUpdate.IsEnabled = true;
+                btnDelete.IsEnabled = true;
+                txtName.IsEnabled = true;
             }
             else
             {
                 txtName.Text = "";
+                txtName.IsEnabled = false;
                 btnUpdate.IsEnabled = false;
+                btnDelete.IsEnabled = false;
             }
         }
 
@@ -53,6 +58,15 @@ namespace Control
         {
             Tools.updateUsername(list[lstUser.SelectedIndex].id, txtName.Text);
             updateList();
+        }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("DELETE USER " + list[lstUser.SelectedIndex].name + "?", "WARNING", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                Tools.sendCommand("DESTROY", list[lstUser.SelectedIndex].id, 0);
+                updateList();
+            }
         }
     }
 }
