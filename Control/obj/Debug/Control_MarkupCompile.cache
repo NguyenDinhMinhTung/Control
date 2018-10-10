@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\
+C:\Users\megas\source\repos\Control\Control\obj\Debug\
 Control
 none
 false
 DEBUG;TRACE
-C:\Users\megas\Documents\GitHub\Control\Control\App.xaml
-5-127643820
+C:\Users\megas\source\repos\Control\Control\App.xaml
+71214712211
 
-11-624485131
-71528592142
-ChatWindow.xaml;FileExplorerWindow.xaml;MainWindow.xaml;UserManagerWindow.xaml;ViewKeyLogWindow.xaml;
+131217889306
+111675745048
+ChatWindow.xaml;FileExplorerWindow.xaml;MainWindow.xaml;ProcessManagerWindow.xaml;UploadNewVersionWindow.xaml;UserManagerWindow.xaml;ViewKeyLogWindow.xaml;
 
 False
 

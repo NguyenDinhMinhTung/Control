@@ -64,7 +64,7 @@ namespace Control
         {
             if (MessageBox.Show("DELETE USER " + list[lstUser.SelectedIndex].name + "?", "WARNING", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
-                Tools.sendCommand("DESTROY", list[lstUser.SelectedIndex].id, 0);
+                Tools.sendCommand("DESTROY", list[lstUser.SelectedIndex].id,0);
                 updateList();
             }
         }

@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,9 +22,12 @@ namespace Control
         int sessionID;
         int touserid;
         int selectedUser;
+        int sendToAll = -1;
 
         ChatWindow chatWindow;
         FileExplorerWindow fileExplorerWindow;
+        ProcessManagerWindow processManagerWindow;
+
         List<User> lstUser;
 
         delegate void _Action();
@@ -31,12 +38,13 @@ namespace Control
 
             chatWindow = new ChatWindow((mess) =>
             {
-                Tools.sendCommand("mess " + mess, touserid, sessionID);
-            });
+                Tools.sendCommand("mess " + mess, touserid, sendToAll);
+            },
+            () => { Tools.sendCommand("CLOSECHATBOX", touserid); });
 
             refreshListUser();
 
-            //grbOperation.IsEnabled = false;
+            grbOperation.IsEnabled = false;
 
             Thread thread = new Thread(requestCommand);
             thread.IsBackground = true;
@@ -88,11 +96,7 @@ namespace Control
         {
             if (cmd.ToUpper().StartsWith("MESS"))
             {
-                chatWindow.txtChatBox.Dispatcher.Invoke(new _Action(() =>
-                {
-                    chatWindow.txtChatBox.AppendText("CLIENT: " + cmd.Substring(5) + Environment.NewLine);
-                    chatWindow.txtChatBox.ScrollToEnd();
-                }));
+                chatWindow.addMessage(lstUser[selectedUser].name, cmd.Substring(5));
             }
             else if (cmd.ToUpper().StartsWith("FILEEXPLORER"))
             {
@@ -125,6 +129,13 @@ namespace Control
                 int id = int.Parse(cmd.Substring(7));
                 setOnline(id);
             }
+            else if (cmd.ToUpper().StartsWith("PROCESS"))
+            {
+                if (processManagerWindow != null)
+                {
+                    processManagerWindow.setdata(cmd.Substring(8));
+                }
+            }
         }
 
         private void setOnline(int userid)
@@ -149,7 +160,7 @@ namespace Control
 
         private string[] getCommand()
         {
-            string responseFromServer = Tools.request("http://akita123.atwebpages.com/main.php?type=3&ssid=" + sessionID + "&touserid=" + userID);
+            string responseFromServer = Tools.request("http://akita123.atwebpages.com/main.php?type=3&ssid=0&touserid=" + userID);
 
             string[] sep = { "</br>" };
 
@@ -180,7 +191,7 @@ namespace Control
 
             foreach (User user in lstUser)
             {
-                Tools.sendCommand("ONLINE", user.id, 0);
+                Tools.sendCommand("ONLINE", user.id);
             }
 
             if (selectedUser > lstMainUser.SelectedIndex)
@@ -209,19 +220,19 @@ namespace Control
             if (chatWindow != null)
             {
                 chatWindow.Show();
-                chatWindow.setTouserid(touserid);
+                //chatWindow.setTouserid(touserid);
             }
         }
 
         private void btnShutdown_Click(object sender, RoutedEventArgs e)
         {
-            Tools.sendCommand("shutdown", touserid, sessionID);
+            Tools.sendCommand("shutdown", touserid, sendToAll);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             chatWindow.Close();
-            Tools.sendCommand("CLOSECHATBOX", touserid, 0);
+            Tools.sendCommand("CLOSECHATBOX", touserid);
             Environment.Exit(0);
         }
 
@@ -239,18 +250,18 @@ namespace Control
 
         private void btnViewScreen_Click(object sender, RoutedEventArgs e)
         {
-            Tools.sendCommand("viewscreen", touserid, sessionID);
+            Tools.sendCommand("viewscreen", touserid);
             prbViewScreen.IsIndeterminate = true;
         }
 
         private void btnRestart_Click(object sender, RoutedEventArgs e)
         {
-            Tools.sendCommand("restart", touserid, sessionID);
+            Tools.sendCommand("restart", touserid, sendToAll);
         }
 
         private void btnLogoff_Click(object sender, RoutedEventArgs e)
         {
-            Tools.sendCommand("logoff", touserid, sessionID);
+            Tools.sendCommand("logoff", touserid, sendToAll);
         }
 
         private void btnUserManager_Click(object sender, RoutedEventArgs e)
@@ -274,12 +285,12 @@ namespace Control
                 }
                 else
                 {
-                    //grbOperation.IsEnabled = false;
+                    grbOperation.IsEnabled = false;
                 }
             }
             else
             {
-                //grbOperation.IsEnabled = false;
+                grbOperation.IsEnabled = false;
             }
         }
 
@@ -289,6 +300,43 @@ namespace Control
             {
                 CollectionViewSource.GetDefaultView(lstMainUser.ItemsSource).Refresh();
             }
+        }
+
+        private void ckbSendThisSession_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ckbSendThisSession_Click(object sender, RoutedEventArgs e)
+        {
+            if (ckbSendThisSession.IsChecked == true)
+            {
+                sendToAll = -1;
+            }
+            else
+            {
+                sendToAll = 0;
+            }
+        }
+
+        private void btnViewProcess_Click(object sender, RoutedEventArgs e)
+        {
+            processManagerWindow = new ProcessManagerWindow(() =>
+            {
+                Tools.sendCommand("PROCESS", touserid);
+            },
+            (processname) =>
+            {
+                Tools.sendCommand("KILLPROCESS " + processname, touserid);
+            });
+
+            processManagerWindow.Show();
+        }
+
+        private void btnUploadNewVersion_Click(object sender, RoutedEventArgs e)
+        {
+            UploadNewVersionWindow uploadNewVersion = new UploadNewVersionWindow();
+            uploadNewVersion.Show();
         }
     }
 }

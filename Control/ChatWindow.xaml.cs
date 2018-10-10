@@ -22,25 +22,18 @@ namespace Control
     public partial class ChatWindow : Window
     {
         public delegate void SendMessage(string mess);
+        public delegate void CloseClientChatBox();
 
-        int touserid;
+        delegate void _Action();
+
         SendMessage sendMessage;
+        CloseClientChatBox closeClientChatBox;
 
-        public ChatWindow(SendMessage sendMessage)
+        public ChatWindow(SendMessage sendMessage, CloseClientChatBox closeClientChatBox)
         {
             InitializeComponent();
             this.sendMessage = sendMessage;
-        }
-
-        public void setTouserid(int touserid)
-        {
-            if (this.touserid != touserid)
-            {
-                txtChatBox.SelectAll();
-                txtChatBox.Selection.Text = "";
-            }
-
-            this.touserid = touserid;
+            this.closeClientChatBox = closeClientChatBox;
         }
 
         private void send()
@@ -67,11 +60,22 @@ namespace Control
             }
         }
 
+        public void addMessage(string username, string message)
+        {
+            if (username == "") username = "Noname";
+
+            txtChatBox.Dispatcher.Invoke(new _Action(() =>
+            {
+                txtChatBox.AppendText(username+ ": " + message + Environment.NewLine);
+                txtChatBox.ScrollToEnd();
+            }));
+        }
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
             this.Hide();
-            Tools.sendCommand("CLOSECHATBOX", touserid, 0);
+            closeClientChatBox();
         }
     }
 }

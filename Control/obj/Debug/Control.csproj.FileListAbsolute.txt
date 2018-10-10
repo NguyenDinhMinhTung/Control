@@ -41,3 +41,8 @@ C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\Control.Properties.Res
 C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\Control.csproj.GenerateResource.Cache
 C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\Control.exe
 C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\Control.pdb
+C:\Users\megas\source\repos\Control\Control\obj\Debug\ProcessManagerWindow.g.cs
+C:\Users\megas\source\repos\Control\Control\obj\Debug\ProcessManagerWindow.baml
+C:\Users\megas\source\repos\Control\Control\bin\Debug\Control.exe.config
+C:\Users\megas\source\repos\Control\Control\obj\Debug\UploadNewVersionWindow.g.cs
+C:\Users\megas\source\repos\Control\Control\obj\Debug\UploadNewVersionWindow.baml

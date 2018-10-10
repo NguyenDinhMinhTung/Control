@@ -42,7 +42,7 @@ namespace Control
             this.touserid = touserid;
             this.sessionid = sessionid;
 
-            Tools.sendCommand("FILEEXPLORER", touserid, sessionid);
+            Tools.sendCommand("FILEEXPLORER", touserid);
             enableControl(false);
             btnRun.IsEnabled = false;
         }
@@ -175,13 +175,13 @@ namespace Control
         private void btnRun_Click(object sender, RoutedEventArgs e)
         {
             string path = lstFiles[index][lstExplorer.SelectedIndex].path.Replace('\\', ';');
-            Tools.sendCommand("RUN " + path, touserid, sessionid);
+            Tools.sendCommand("RUN " + path, touserid);
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             string path = lstFiles[index][lstExplorer.SelectedIndex].path.Replace('\\', ';');
-            Tools.sendCommand("DELETE " + path, touserid, sessionid);
+            Tools.sendCommand("DELETE " + path, touserid);
         }
 
         private void access(int selectIndex)
@@ -190,7 +190,7 @@ namespace Control
             {
                 if (lstFiles[index][selectIndex].isFolder)
                 {
-                    Tools.sendCommand("FILEEXPLORER " + lstFiles[index][selectIndex].path.Replace('\\', ';'), touserid, sessionid);
+                    Tools.sendCommand("FILEEXPLORER " + lstFiles[index][selectIndex].path.Replace('\\', ';'), touserid);
                     btnCancel.IsEnabled = true;
                     nextPath = lstFiles[index][selectIndex].path;
 

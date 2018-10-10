@@ -8,6 +8,7 @@ namespace Control
 {
     static class Tools
     {
+
         public static string request(string url)
         {
             WebRequest request = WebRequest.Create(url);
@@ -24,9 +25,9 @@ namespace Control
             return responseFromServer;
         }
 
-        public static void sendCommand(string command, int touserid, int sessionid)
+        public static void sendCommand(string command, int touserid, int toall = -1)
         {
-            Tools.request("http://akita123.atwebpages.com/main.php?type=2&cmd='" + command + "'&fromuserid=1&touserid=" + touserid + "&ssid=" + sessionid);
+            Tools.request("http://akita123.atwebpages.com/main.php?type=2&cmd='" + command + "'&fromuserid=1&touserid=" + touserid + "&ssid=" + toall);
         }
 
         public static int getUserIdFromString(string s)
