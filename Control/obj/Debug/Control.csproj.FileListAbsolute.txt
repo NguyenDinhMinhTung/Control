@@ -46,3 +46,8 @@ C:\Users\megas\source\repos\Control\Control\obj\Debug\ProcessManagerWindow.baml
 C:\Users\megas\source\repos\Control\Control\bin\Debug\Control.exe.config
 C:\Users\megas\source\repos\Control\Control\obj\Debug\UploadNewVersionWindow.g.cs
 C:\Users\megas\source\repos\Control\Control\obj\Debug\UploadNewVersionWindow.baml
+C:\Users\megas\Documents\GitHub\Control\Control\bin\Debug\Control.exe.config
+C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\ProcessManagerWindow.g.cs
+C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\UploadNewVersionWindow.g.cs
+C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\ProcessManagerWindow.baml
+C:\Users\megas\Documents\GitHub\Control\Control\obj\Debug\UploadNewVersionWindow.baml
